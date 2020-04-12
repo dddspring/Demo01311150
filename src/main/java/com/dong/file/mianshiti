@@ -1,0 +1,49 @@
+一@Autowired和@Resource的区别
+@Autowired 注解是由AutowiredAnnotationBeanPostProcessor后置处理器解析
+@Resource 注解是由CommonAnnotationBeanPostProcessor后置处理器解析
+
+二spring的三级缓存
+    protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+        Object singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null && this.isSingletonCurrentlyInCreation(beanName)) {
+            synchronized(this.singletonObjects) {
+                singletonObject = this.earlySingletonObjects.get(beanName);
+                if (singletonObject == null && allowEarlyReference) {
+                    ObjectFactory<?> singletonFactory = (ObjectFactory)this.singletonFactories.get(beanName);
+                    if (singletonFactory != null) {
+                        singletonObject = singletonFactory.getObject();
+                        this.earlySingletonObjects.put(beanName, singletonObject);
+                        this.singletonFactories.remove(beanName);
+                    }
+                }
+            }
+        }
+        return singletonObject != NULL_OBJECT ? singletonObject : null;
+    }
+
+  三级缓存put一个从二级缓存中生产出的一个对象，为什么不直接从二级缓存中拿？
+性能   二级缓存是一个工厂，经过工厂模式，很复杂
+1 singletonObjects  单例池  spring容器   (是一个bean)
+2 singletonFactories 工厂               (是一个Object)
+3 earlySingletonObjects 三级缓存         (是一个Object)
+
+--------------------------------------------------------------------------------------------
+AOP
+spring容器：就是让spring运行的组件，比如 BeanDefiniton，Scanner，BeanFactoryPostprocessor等
+实现ApplicationContext接口就是容器
+BeanFactory  就是  DefaultListableBeanFactory  类
+
+DefaultListableBeanFactory  中 有 beanDefinitionMap 属性，用来存储BeanDefinition，以 BeanName为key
+
+BeanFactoryPostProcessor 是扩展接口，可以改变beanDefinition的属性
+
+
+createBean  调用9次后置处理器   BeanPostProcessor--后置处理器接口
+
+ApplicationContextAwareProcessor 后置处理器通过反射 使实现 ApplicationContextAware接口的对象有ApplicationContext类
+@PostConstruct
+
+invorkInitMethods() 执行spring生命周期函数的结束---  after
+
+直接实现BeanPostProcessor 只能插手spring实例化初始化开始过程
+间接--                    插手spring实例化过程
