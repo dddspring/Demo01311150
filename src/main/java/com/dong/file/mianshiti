@@ -47,3 +47,12 @@ invorkInitMethods() 执行spring生命周期函数的结束---  after
 
 直接实现BeanPostProcessor 只能插手spring实例化初始化开始过程
 间接--                    插手spring实例化过程
+-------------------------------------------------------------------------------------------------------------
+springboot
+tomcat web容器（jetty）----实现了servlet规范
+tomcat 7 <  servlet3.0 , tomcat8 > servlet3.0
+servlet3.0规范(spring3.0以后零配置原因):
+                spring-web(classpath下)------META-INF-----------services------------org.springframework.web.SpringServletContainerInitializer
+                ----------实现ServletContainerInitializer接口调用onStartup方法--------有@HandlesTypes(WebApplicationInitializer.class)
+                ----------ServletContainerInitializeronStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)中
+                webAppInitializerClasses 集合包含了实现WebApplicationInitializer所有类，调用类中onStartup方法
