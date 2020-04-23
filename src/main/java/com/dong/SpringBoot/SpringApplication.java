@@ -9,6 +9,7 @@ public class SpringApplication {
         try {
             Tomcat t = new Tomcat();
             t.setPort(56666);
+            System.out.println("手Tomcat");
             //t.addContext("/","d:\\\\zx\\\\");
             // 只要有这个设置，tomcat默认为web项目
             t.addWebapp("/","d:\\zx\\");
